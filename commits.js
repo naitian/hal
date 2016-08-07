@@ -32,6 +32,7 @@ function filechanges(name, url, cb2){
 
 module.exports = {
 	commitinfo: function(name, date, repo, authx, cb){ //sends back commit info
+		authx = '1c622e602d70b97cb5e6d0e9f3af099f26bde4d6';
 		var options = {
 			url:`https://api.github.com/repos/${name}/${repo}/commits?access_token=${authx}`,
 			headers:{'User-Agent':name}
@@ -55,7 +56,7 @@ module.exports = {
 						commit.url = x.html_url;
 						commit.changes = changesJSON;
 						// console.log(changesJSON);
-						// console.log(commit);
+						console.log(commit);
 						info.push(commit);
 						cb(info);
 					});
