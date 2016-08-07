@@ -1,6 +1,6 @@
 'use strict';
 
-const tasksList = [];
+let tasksList = [];
 
 module.exports = {
 	//Create
@@ -9,12 +9,12 @@ module.exports = {
 	},
 	//Read
 	readTasks: function(){
-		let output = "";
+		let output = '';
 		for(let cnt = 0; cnt < tasksList.length; cnt++){
-			output += (Array(tasksList.length.toString().length).join("0") + cnt).slice(-tasksList.length.toString().length) +
-				" : " +
+			output += (Array(tasksList.length.toString().length).join('0') + cnt).slice(-tasksList.length.toString().length) +
+				' : ' +
 				tasksList[cnt] + 
-				"\n";
+				'\n';
 		}
 		return output;
 	},
@@ -25,5 +25,9 @@ module.exports = {
 	//Delete
 	deleteTask: function(taskIndex){
 		tasksList.splice(taskIndex, 1);
+	},
+
+	setList: function(list) {
+		tasksList = list;
 	}
-}
+};

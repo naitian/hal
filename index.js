@@ -4,13 +4,54 @@ const fs = require('fs');
 const prompt = require('prompt');
 const Bot = require('botjs2');
 const shlight = require('./shlight.js');
-
-function highlight (botAPI) {
-  let msg = {
-    body: 'Your code, pretty:',
-    attachment: shlight.getSyntaxImage(botAPI.args[0])
-  };
-  botAPI.sendMessage(msg);
+const tasks = require('./tasks.js');
+function task (botAPI) {
+  botAPI.getThreadData('tasks', (err, info) => {
+    if (err) {
+      botAPI.sendMessage('Oh no, something went wrong...');
+      return;
+    }
+    tasks.setList(info);
+    switch (botAPI.args[0]) {
+      case 'add':
+        tasks.createTask(botAPI.args[1]);
+        botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
+          if (err) {
+            botAPI.sendMessage('Oh no, something went wrong...');
+            return;
+          } else {
+            botAPI.sendMessage(`${botAPI.args[1]} was added to tasks`);
+          }
+        });
+        break;
+      case 'edit':
+        tasks.updateTask(botAPI.args[1], botAPI.args[2]);
+        botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
+          if (err) {
+            botAPI.sendMessage('Oh no, something went wrong...');
+            return;
+          } else {
+            botAPI.sendMessage(`Task revised to ${botAPI.args[2]}`);
+          }
+        });
+        break;
+      case 'del':
+        tasks.deleteTask(botAPI.args[1]);
+        botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
+          if (err) {
+            botAPI.sendMessage('Oh no, something went wrong...');
+            return;
+          } else {
+            botAPI.sendMessage(`Task ${botAPI.args[1]} was deleted.`);
+          }
+        });
+        break;
+      case 'list':
+        botAPI.sendMessage(tasks.readTasks());
+        break;
+    }
+  });
+  
 }
 
 function authenticate(credentials){
@@ -24,7 +65,10 @@ function authenticate(credentials){
 
     const Hal = new Bot('Hal the Dev Cyborg', api);
     Hal
-      .command('!hl', highlight, '!hl <code>');
+      .command('!task', task, `!task add <task>
+        !task edit <index> <new>
+        !task del <index>
+        !task list`);
   });
 }
 

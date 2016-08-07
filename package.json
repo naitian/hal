@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/naitian/hal#readme",
   "dependencies": {
-    "botjs2": "git+ssh://git@github.com/naitian/botjs2.git",
+    "botjs2": "http://github.com/naitian/botjs2.git",
     "cheerio": "^0.20.0",
     "highlight": "^0.2.4",
     "request": "^2.74.0",
