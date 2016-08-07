@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/naitian/hal#readme",
   "dependencies": {
+	"cheerio": "^0.0.0",
+	"request": "^0.0.0",
     "highlight": "^0.2.4",
     "wkhtmltox": "^1.0.8"
   }
