@@ -3,10 +3,34 @@
 "use strict";
 var request = require("request");
 
+function filechanges(name, url, cb2){
+	var options = {
+		url:url,
+		headers:{'User-Agent':name}
+	};
+
+	request(options, function(error, response, body){ //get files changed in each commit. increases api calls.
+		if(!error && response.statusCode == 200){
+			var files = [];
+			for(let x of JSON.parse(body).files){
+				// console.log(x);
+				var fileinfo = {};
+				fileinfo.name = x.filename;
+				fileinfo.status = x.status;
+				fileinfo.url = x.raw_url;
+				fileinfo.add = x.additions;
+				fileinfo.del = x.deletions;
+				fileinfo.changes = x.changes;
+				// console.log(fileinfo);
+				files.push(fileinfo);
+			}
+			// console.log(files);
+			cb2(files);
+		}
+	});
+}
+
 module.exports = {
-	cb2: function(files){
-		console.log(files);
-	},
 	commitinfo: function(name, date, repo, authx, cb){ //sends back commit info
 		var options = {
 			url:`https://api.github.com/repos/${name}/${repo}/commits?access_token=${authx}`,
@@ -23,35 +47,21 @@ module.exports = {
 					if(new Date(x.commit.author.date).getTime() < new Date(date).getTime()){
 						break;
 					}
-
-					commit.name = x.commit.author.name;
-					commit.date = x.commit.author.date;
-					commit.message = x.commit.message;
-					commit.url = x.html_url;
-
-					request({url:x.url,headers:{'User-Agent':name}}, function(error, response, body){ //get files changed in each commit. increases api calls.
-						if(!error && response.statusCode == 200){
-							cb2(JSON.parse(body).files);
-						}	
-					}
-
 					// console.log(x.url);
-					commit.changes = function(function(cb2)){
-						function(cb2){
-							request({url:x.url,headers:{'User-Agent':name}}, function(error, response, body){ //get files changed in each commit. increases api calls.
-							if(!error && response.statusCode == 200){
-								cb2(JSON.parse(body).files);
-							}							
-						}
-
-						return changeJSON;
+					filechanges(name, `${x.url}?access_token=${authx}`, function(changesJSON){
+						commit.name = x.commit.author.name;
+						commit.date = x.commit.author.date;
+						commit.message = x.commit.message;
+						commit.url = x.html_url;
+						commit.changes = changesJSON;
+						// console.log(changesJSON);
+						// console.log(commit);
+						info.push(commit);
+						cb(info);
 					});
-					}
 					
-					info.push(commit);
 				}
-				console.log(info);
-				cb(info);
+				// console.log(info);
 			}			
 		});
 	}
