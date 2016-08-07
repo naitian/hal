@@ -8,8 +8,19 @@ const tasks = require('./tasks.js');
 function task (botAPI) {
   botAPI.getThreadData('tasks', (err, info) => {
     if (err) {
-      botAPI.sendMessage('Oh no, something went wrong...');
-      return;
+      console.log(err);
+      if (err === 'Key does not exist') {
+        tasks.setList([]);
+        botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
+          if (err) {
+            botAPI.sendMessage('Oh no, something went wrong...');
+            console.log(err);
+            return;
+          }
+        });
+      }
+      else 
+        return;
     }
     tasks.setList(info);
     switch (botAPI.args[0]) {
@@ -18,6 +29,7 @@ function task (botAPI) {
         botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
           if (err) {
             botAPI.sendMessage('Oh no, something went wrong...');
+            console.log(err);
             return;
           } else {
             botAPI.sendMessage(`${botAPI.args[1]} was added to tasks`);
@@ -29,6 +41,7 @@ function task (botAPI) {
         botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
           if (err) {
             botAPI.sendMessage('Oh no, something went wrong...');
+            console.log(err);
             return;
           } else {
             botAPI.sendMessage(`Task revised to ${botAPI.args[2]}`);
@@ -40,6 +53,7 @@ function task (botAPI) {
         botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
           if (err) {
             botAPI.sendMessage('Oh no, something went wrong...');
+            console.log(err);
             return;
           } else {
             botAPI.sendMessage(`Task ${botAPI.args[1]} was deleted.`);

@@ -16,6 +16,10 @@ module.exports = {
 				tasksList[cnt] + 
 				'\n';
 		}
+
+		if (tasksList.length < 1) {
+			output = 'No tasks currently';
+		}
 		return output;
 	},
 	//Update
@@ -29,5 +33,7 @@ module.exports = {
 
 	setList: function(list) {
 		tasksList = list;
-	}
+	}, 
+
+	tasksList: tasksList
 };
