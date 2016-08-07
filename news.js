@@ -6,16 +6,15 @@ var request = require('request');
 // const links = [];
 // const titles = [];
 
-const links = [];
-let done = false;
-let working = false;
+let links = [];
 
 module.exports = {
 	retrieveNewsArticles: function(num, cb){
+		links = [];
 		num = num || 5;
 		if (num > 30) num = 30;
 		request('https://news.ycombinator.com/', function(error, response, body){
-			if(!error && response.statusCode == 200){
+			if(!error && response.statusCode === 200){
 				const $  = cheerio.load(body);
 				const anchors = $('.title a');
 				for(let cnt = 0; cnt < Math.min(num, anchors.length) * 2; cnt += 2){
@@ -32,4 +31,4 @@ module.exports = {
 			}
 		});
 	}
-}
+};

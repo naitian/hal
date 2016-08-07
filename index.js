@@ -5,22 +5,24 @@ const prompt = require('prompt');
 const Bot = require('botjs2');
 const shlight = require('./shlight.js');
 const tasks = require('./tasks.js');
+const hackernews = require('./news.js');
+
 function task (botAPI) {
   botAPI.getThreadData('tasks', (err, info) => {
     if (err) {
       console.log(err);
-      if (err === 'Key does not exist') {
-        tasks.setList([]);
-        botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
-          if (err) {
-            botAPI.sendMessage('Oh no, something went wrong...');
-            console.log(err);
-            return;
-          }
-        });
-      }
-      else 
-        return;
+      // if (err === 'Key does not exist') {
+      //   tasks.setList([]);
+      //   botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
+      //     if (err) {
+      //       botAPI.sendMessage('Oh no, something went wrong...');
+      //       console.log(err);
+      //       return;
+      //     }
+      //   });
+      // }
+      // else 
+        // return;
     }
     tasks.setList(info);
     switch (botAPI.args[0]) {
@@ -68,6 +70,18 @@ function task (botAPI) {
   
 }
 
+function news (botAPI) {
+  console.log(botAPI.args[0]);
+  hackernews.retrieveNewsArticles(botAPI.args[0], (links) => {
+    let output = '';
+    for (let link of links) {
+      output += link.title + '\n\t' + link.href + '\n';
+    }
+
+    botAPI.sendMessage(output);
+  });
+}
+
 function authenticate(credentials){
   login(credentials, function(err, api) {
     if(err) return console.trace(err);
@@ -82,7 +96,8 @@ function authenticate(credentials){
       .command('!task', task, `!task add <task>
         !task edit <index> <new>
         !task del <index>
-        !task list`);
+        !task list`)
+      .command('!news', news, `!news <amount (min 5, max 30)>`);
   });
 }
 
