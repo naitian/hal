@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/naitian/hal/issues"
   },
-  "homepage": "https://github.com/naitian/hal#readme"
+  "homepage": "https://github.com/naitian/hal#readme",
+  "dependencies": {
+    "highlight": "^0.2.4",
+    "wkhtmltox": "^1.0.8"
+  }
 }
