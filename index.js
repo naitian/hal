@@ -3,27 +3,16 @@ const login = require('facebook-chat-api');
 const fs = require('fs');
 const prompt = require('prompt');
 const Bot = require('botjs2');
-const shlight = require('./shlight.js');
+// const shlight = require('./shlight.js');
 const tasks = require('./tasks.js');
 const hackernews = require('./news.js');
 const commits = require('./commits.js');
+const notes = require('./notes.js');
 
 function task (botAPI) {
   botAPI.getThreadData('tasks', (err, info) => {
     if (err) {
       console.log(err);
-      // if (err === 'Key does not exist') {
-      //   tasks.setList([]);
-      //   botAPI.setThreadData('tasks', tasks.tasksList, (err) => {
-      //     if (err) {
-      //       botAPI.sendMessage('Oh no, something went wrong...');
-      //       console.log(err);
-      //       return;
-      //     }
-      //   });
-      // }
-      // else 
-        // return;
     }
     tasks.setList(info);
     switch (botAPI.args[0]) {
@@ -83,9 +72,11 @@ function news (botAPI) {
 }
 
 function git (botAPI) {
-  commits.commitinfo(botAPI.args[0], new Date('11-19-2015'), botAPI.args[1], 'blah', (info) => {
+  let oneHourAgo = new Date();
+  oneHourAgo.setHours((new Date()).getHours() - 1);
+  console.log('one hour ago was ', oneHourAgo.getHours());
+  commits.commitinfo(botAPI.args[0], oneHourAgo, botAPI.args[1], 'blah', (info) => {
     let output = '';
-    let length = Math.min(info.length, 5);
 
       output += `${info[0].name} made a commit on ${info[0].date}.
       "${info[0].message}"
@@ -117,7 +108,9 @@ function authenticate(credentials){
         !task del <index>
         !task list`)
       .command('!news', news, `!news <amount (min 5, max 30)>`)
-      .command('!git', git, `!git <name> <repo>`);
+      .command('!git', git, `!git <name> <repo>`)
+      .command('!note', notes.setNote, '!note <name> <message>')
+      .event('message', notes.checkNotes);
   });
 }
 

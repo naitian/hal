@@ -1,7 +1,7 @@
 //i have no idea what im doing, ~Andrew Shi MLH Prime Spring 2016
 
-"use strict";
-var request = require("request");
+'use strict';
+var request = require('request');
 
 function filechanges(name, url, cb2){
 	var options = {
@@ -9,8 +9,9 @@ function filechanges(name, url, cb2){
 		headers:{'User-Agent':name}
 	};
 
-	request(options, function(error, response, body){ //get files changed in each commit. increases api calls.
-		if(!error && response.statusCode == 200){
+	request(options, function(error, response, body){ //get files changed in each commit. 
+													  //increases api calls
+		if(!error && response.statusCode === 200){
 			var files = [];
 			for(let x of JSON.parse(body).files){
 				// console.log(x);
@@ -32,14 +33,14 @@ function filechanges(name, url, cb2){
 
 module.exports = {
 	commitinfo: function(name, date, repo, authx, cb){ //sends back commit info
-		authx = '1c622e602d70b97cb5e6d0e9f3af099f26bde4d6';
+		authx = '';
 		var options = {
 			url:`https://api.github.com/repos/${name}/${repo}/commits?access_token=${authx}`,
 			headers:{'User-Agent':name}
 		};
 
 		request(options, function(error, response, body){
-			if(!error && response.statusCode == 200){
+			if(!error && response.statusCode === 200){
 				body = JSON.parse(body);
 
 				var info = []; //array to be returned
@@ -66,4 +67,4 @@ module.exports = {
 			}			
 		});
 	}
-}
+};
